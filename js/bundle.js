@@ -51,13 +51,25 @@
 	const appState_1 = __webpack_require__(172);
 	const App_1 = __webpack_require__(281);
 	__webpack_require__(289);
-	const init = { lang: 'en', foods: {} };
+	const localStorage = {
+	    getItem(key) {
+	        return JSON.parse(window.localStorage.getItem(key));
+	    },
+	    setItem(key, value) {
+	        console.log('saving key ' + key);
+	        window.localStorage.setItem(key, JSON.stringify(value));
+	    }
+	};
+	let init = localStorage.getItem('saved');
+	if (!init) {
+	    init = { lang: 'en', foods: {} };
+	}
 	const now = new Date();
 	const session = {
 	    selected: now
 	};
 	const state = new appState_1.AppState(init, session);
-	ReactDOM.render(React.createElement(App_1.App, { state: state }), document.getElementById("app"));
+	ReactDOM.render(React.createElement(App_1.App, { localStorage: localStorage, state: state }), document.getElementById("app"));
 
 /***/ },
 /* 1 */
@@ -21439,6 +21451,9 @@
 	        this.saved = immutable_1.fromJS(saved);
 	        this.unsaved = immutable_1.fromJS(unsaved);
 	    }
+	    getSavedState() {
+	        return this.saved.toJS();
+	    }
 	    clone(s, u) {
 	        return new AppState(s.toJS(), u.toJS());
 	    }
@@ -40914,6 +40929,7 @@
 	    }
 	    update(state) {
 	        console.log(state);
+	        this.props.localStorage.setItem('saved', state.getSavedState());
 	        this.setState({ appState: state });
 	    }
 	    getState() {
@@ -41114,7 +41130,6 @@
 	    componentDidUpdate(prevProps) {
 	        if (this.state.editMode) {
 	            const field = this.refs['editableField'];
-	            console.log(field);
 	            field.focus();
 	        }
 	    }
