@@ -41137,6 +41137,7 @@
 	        const editMode = () => {
 	            const state = this.state;
 	            state.editMode = true;
+	            state.value = this.props.value ? this.props.value : '';
 	            this.setState(state);
 	        };
 	        const edit = event => {
